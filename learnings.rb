@@ -1,8 +1,8 @@
 # Ruby tips and tricks
 args.select { |arg| Hash === arg  } # use the === comparison for is_a?
-args.reject! {|a| a.blank? } # it's like compact, but for blank strings /and/ nils
-Array.wrap(value) # is like [thing_that_could_be_array].flatten, and like Array(thing), except this won't convert a hash to an array
-
+args.grep(Hash)                     # do the same thing, but more cleanly. grep uses ===
+args.reject! {|a| a.blank? }        # it's like compact, but for blank strings /and/ nils
+Array.wrap(value)                   # is like [thing_that_could_be_array].flatten, and like Array(thing), except this won't convert a hash to an array
 def reorder(*args)
   # ...
   relation.order_values = args.flatten # lets you pass args as args or array (either way, they become an array)
@@ -37,13 +37,19 @@ end
 
 # Query Methods
 Teacher.where(name: 'Amy').where_values #shows all the where's in a relation
-  :includes_values, :eager_load_values, :preload_values,
-  :select_values, :group_values, :order_values, :joins_values,
-  :where_values, :having_values, :bind_values,
-  :limit_value, :offset_value, :lock_value, :readonly_value, :create_with_value,
-  :from_value, :reordering_value, :reverse_order_value,
-  :uniq_value
+  # :includes_values, :eager_load_values, :preload_values,
+  # :select_values, :group_values, :order_values, :joins_values,
+  # :where_values, :having_values, :bind_values,
+  # :limit_value, :offset_value, :lock_value, :readonly_value, :create_with_value,
+  # :from_value, :reordering_value, :reverse_order_value,
+  # :uniq_value
 
+Teacher.scoped                # turns a model into a relation
 Teacher.eager_load(:students) # forces one query with temp tables to eager load
 Teacher.preload(:students)    # runs 2 queries to eager load students
 Teacher.includes(:students)   # decides whether it's more efficient to do eager_load or preload and does it (see usage of eager_loading? in relation.rb)
+Teacher.scoped.extending(SomeModule) # extends the scope with the module (or you can use a block to define methods, or both)
+Teacher.scoped.reverse_order  # reverses the final order of the results
+
+# Great refactors
+# https://github.com/rails/rails/commit/b68407f7f013ce3b08d1273ac3c2ffd7a8a510c9
