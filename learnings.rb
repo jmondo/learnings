@@ -2,6 +2,8 @@
 args.select { |arg| Hash === arg  } # use the === comparison for is_a?
 args.grep(Hash)                     # do the same thing, but more cleanly. grep uses ===
 args.reject! {|a| a.blank? }        # it's like compact, but for blank strings /and/ nils
+
+# Rails tips and tricks
 Array.wrap(value)                   # is like [thing_that_could_be_array].flatten, and like Array(thing), except this won't convert a hash to an array
 def reorder(*args)
   # ...
@@ -53,3 +55,12 @@ Teacher.scoped.reverse_order  # reverses the final order of the results
 
 # Great refactors
 # https://github.com/rails/rails/commit/b68407f7f013ce3b08d1273ac3c2ffd7a8a510c9
+
+
+# ActiveSupport
+
+# with SafeBuffer (html safe), addition is not commutative (order changes behavior) :(
+"<script></script>".html_safe + "<script></script>" #=> safe (unsafe part gets sanitized)
+  #=> HTML: <script></script> '<script></script>'
+"<script></script>" + "safe".html_safe #=> unsafe all the way
+  #=> HTML: '<script></script> <script></script>'
