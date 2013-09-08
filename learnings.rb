@@ -78,3 +78,8 @@ config.action_dispatch.ip_spoofing_check #=> true
 # you can make one like above or by passing an existing hash with [], NOT .new
 options = ActiveSupport::OrderedOptions[{option_a: true, option_b: false}]
 options.option_b #=> false
+
+# ActiveSupport::StringInquirer is a whole class to just allow you to question mark booleans.
+# it controls Rails.env.production?
+
+ActiveSupport::StringInquirer.new("so_bomb").so_bomb? #=> true
