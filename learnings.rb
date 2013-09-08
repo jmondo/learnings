@@ -64,3 +64,17 @@ Teacher.scoped.reverse_order  # reverses the final order of the results
   #=> HTML: <script></script> '<script></script>'
 "<script></script>" + "safe".html_safe #=> unsafe all the way
   #=> HTML: '<script></script> <script></script>'
+
+# ActiveSupport::OrderedOptions is a special hash with dot operator setter/getter - snippet:
+module ActionDispatch
+  class Railtie < Rails::Railtie
+    config.action_dispatch = ActiveSupport::OrderedOptions.new
+    config.action_dispatch.x_sendfile_header = nil
+    config.action_dispatch.ip_spoofing_check = true
+    # ...
+
+config.action_dispatch.ip_spoofing_check #=> true
+
+# you can make one like above or by passing an existing hash with [], NOT .new
+options = ActiveSupport::OrderedOptions[{option_a: true, option_b: false}]
+options.option_b #=> false
