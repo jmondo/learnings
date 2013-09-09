@@ -83,3 +83,28 @@ options.option_b #=> false
 # it controls Rails.env.production?
 
 ActiveSupport::StringInquirer.new("so_bomb").so_bomb? #=> true
+
+# TimeWithZone... Time isn't that complicated!
+# http://api.rubyonrails.org/files/activesupport/lib/active_support/time_with_zone_rb.html
+# ruby only lets you see the time in your system time zone or UTC. rails introduces time zones.
+Time.now              #=> 2013-09-07 21:55:01 -0700 (pacific time - my system time - ruby)
+Time.zone             #=> TimeZone object (rails), UTC by default configured by your rails app
+
+
+Time.zone = 'Eastern Time (US & Canada)'
+# my system time is in Pacific
+Time.zone.now               #=> rails TimeWithZone in eastern time!
+Time.now.in_time_zone       #=> rails TimeWithZone in eastern time! (same thing)
+Time.zone.now.localtime     #=> ruby Time in pacific time (same as Time.now)
+Time.zone.now.to_time       #=> ruby Time in pacific time (same as Time.now)
+Time.zone.now.to_datetime   #=> ruby DateTime in eastern time
+Time.now.in_time_zone.to_time.in_time_zone.to_time... #switch back and forth
+Time.zone.now.utc           #=> ruby Time in UTC
+                            #=> 2013-09-09 03:50:08 UTC (like, the current time on the east coast represented in UTC)
+Time.zone.now.time          #=> ruby Time in UTC, but replaces time zone with UTC without adjusting for the time difference
+                            #=> 2013-09-08 23:50:08 UTC (like, not the current time at all)
+
+# can use the all the ruby Time methods on TimeWithZone via method missing and will still be wrapped as TimeWithZone
+# all times are stored in UTC in the database, but if you want to observe your rails app's Time.zone
+# you should always lead with Time.zone (Time.zone.now, Time.zone.parse, etc), otherwise everything will
+# be at the will of your server's system time. And don't use .time.
